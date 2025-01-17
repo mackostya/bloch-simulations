@@ -1,0 +1,3 @@
+[submodule "MRSignalsSeqs"]
+	path = MRSignalsSeqs
+	url = https://github.com/mribri999/MRSignalsSeqs.git

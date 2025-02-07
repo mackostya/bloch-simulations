@@ -58,7 +58,7 @@ def mc2mr(Mc):
 def msinc(N, ncyc):
     """
     Computes the sinc function modulated by a Hamming window.
-    See MATLAB implementatino: https://github.com/mribri999/MRSignalsSeqs/blob/master/Matlab/msinc.m
+    See MATLAB implementation: https://github.com/mribri999/MRSignalsSeqs/blob/master/Matlab/msinc.m
     Parameters:
         N (int): Number of points.
         ncyc (int): Number of cycles.

@@ -35,7 +35,7 @@ class FrequencyFilterApp:
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.plot_frame)
         self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
-        # UI Elements
+        # UI: Filter Type
         self.filter_label = ttk.Label(self.control_frame, text="Filter Type:")
         self.filter_label.pack(pady=2)
 
@@ -51,43 +51,95 @@ class FrequencyFilterApp:
         )
         self.filter_combo.pack(pady=2)
 
-        # Cutoff or band radius
-        ttk.Label(self.control_frame, text="Cutoff / Band Radius").pack(pady=2)
-        self.cutoff_scale = tk.Scale(
-            self.control_frame, from_=1, to=128, orient=tk.HORIZONTAL, command=lambda _: self.update_plot()
-        )
-        self.cutoff_scale.set(20)
-        self.cutoff_scale.pack(pady=2, fill=tk.X)
+        # We'll link sliders and Entries via IntVar (or DoubleVar if needed).
+        # For each parameter, we create a small sub-frame with a label, scale, and entry.
 
-        # Frequency X
-        ttk.Label(self.control_frame, text="Freq X").pack(pady=2)
-        self.freq_x_scale = tk.Scale(
-            self.control_frame, from_=-128, to=128, orient=tk.HORIZONTAL, command=lambda _: self.update_plot()
+        # -- Cutoff / Band Radius --
+        self.create_param_widget(
+            label_text="Cutoff",
+            from_=1,
+            to=128,
+            initial=20,
+            callback=self.update_plot,
+            var_name="cutoff_var",
         )
-        self.freq_x_scale.set(30)
-        self.freq_x_scale.pack(pady=2, fill=tk.X)
 
-        # Frequency Y
-        ttk.Label(self.control_frame, text="Freq Y").pack(pady=2)
-        self.freq_y_scale = tk.Scale(
-            self.control_frame, from_=-128, to=128, orient=tk.HORIZONTAL, command=lambda _: self.update_plot()
+        # -- Freq X --
+        self.create_param_widget(
+            label_text="Freq X",
+            from_=-128,
+            to=128,
+            initial=30,
+            callback=self.update_plot,
+            var_name="freq_x_var",
         )
-        self.freq_y_scale.set(30)
-        self.freq_y_scale.pack(pady=2, fill=tk.X)
+
+        # -- Freq Y --
+        self.create_param_widget(
+            label_text="Freq Y",
+            from_=-128,
+            to=128,
+            initial=30,
+            callback=self.update_plot,
+            var_name="freq_y_var",
+        )
 
         # Initial plot
         self.update_plot()
 
-    def update_plot(self):
+    def create_param_widget(self, label_text, from_, to, initial, callback, var_name):
+        """
+        Helper to create a sub-frame with:
+         - label
+         - scale
+         - numeric entry
+        Binds them all to the same tk.IntVar for easy sync.
+        """
+        frame = ttk.Frame(self.control_frame)
+        frame.pack(pady=2, fill=tk.X)
+
+        label = ttk.Label(frame, text=label_text)
+        label.pack(side=tk.LEFT, padx=2)
+
+        # Shared variable
+        var = tk.IntVar(value=initial)
+        setattr(self, var_name, var)  # store it as an attribute of the class
+
+        # Update function for the scale
+        def on_scale_update(value):
+            # Attempt to parse as int
+            try:
+                var.set(int(float(value)))
+                callback()
+            except ValueError:
+                pass
+
+        # The slider/scale
+        scale = tk.Scale(
+            frame, from_=from_, to=to, orient=tk.HORIZONTAL, variable=var, command=on_scale_update, length=150
+        )
+        scale.pack(side=tk.LEFT, padx=2)
+
+        # The numeric entry
+        entry = ttk.Entry(frame, width=5, textvariable=var)
+        entry.pack(side=tk.LEFT, padx=2)
+
+        # When user presses Enter in the entry, refresh
+        def on_entry_return(event):
+            callback()
+
+        entry.bind("<Return>", on_entry_return)
+
+    def update_plot(self, *args):
         # Clear subplots
         for ax in self.axs:
             ax.clear()
 
         # Read UI controls
         ftype = self.filter_type.get()
-        cutoff = self.cutoff_scale.get()
-        fx = self.freq_x_scale.get()
-        fy = self.freq_y_scale.get()
+        cutoff = self.cutoff_var.get()
+        fx = self.freq_x_var.get()
+        fy = self.freq_y_var.get()
 
         # Apply selected filter
         if ftype == "Low-pass":

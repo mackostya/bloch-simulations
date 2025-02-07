@@ -68,10 +68,16 @@ def select_single_frequency(F_shifted, freq_x, freq_y, band_radius):
     cy = int(crow + freq_y)
 
     # Bounds for primary
-    row_min = max(cy, 0)
-    row_max = min(cy + band_radius, rows)
-    col_min = max(cx, 0)
-    col_max = min(cx + band_radius, cols)
+    if band_radius <= 1:
+        row_min = max(cy, 0)
+        row_max = min(cy + band_radius, rows)
+        col_min = max(cx, 0)
+        col_max = min(cx + band_radius, cols)
+    else:
+        row_min = max(cy - band_radius // 2, 0)
+        row_max = min(cy + band_radius // 2, rows)
+        col_min = max(cx - band_radius // 2, 0)
+        col_max = min(cx + band_radius // 2, cols)
 
     mask[row_min:row_max, col_min:col_max] = True
 
@@ -80,10 +86,16 @@ def select_single_frequency(F_shifted, freq_x, freq_y, band_radius):
     my = int(crow - freq_y)
 
     # Bounds for mirror
-    row_min_m = max(my, 0)
-    row_max_m = min(my + band_radius, rows)
-    col_min_m = max(mx, 0)
-    col_max_m = min(mx + band_radius, cols)
+    if band_radius <= 1:
+        row_min_m = max(my, 0)
+        row_max_m = min(my + band_radius, rows)
+        col_min_m = max(mx, 0)
+        col_max_m = min(mx + band_radius, cols)
+    else:
+        row_min_m = max(my - band_radius // 2, 0)
+        row_max_m = min(my + band_radius // 2, rows)
+        col_min_m = max(mx - band_radius // 2, 0)
+        col_max_m = min(mx + band_radius // 2, cols)
 
     mask[row_min_m:row_max_m, col_min_m:col_max_m] = True
 

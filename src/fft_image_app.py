@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
+import tkinter.font as tkFont  # For adjusting default Tkinter fonts
+
 import cv2
 import matplotlib
 
@@ -7,6 +9,7 @@ matplotlib.use("TkAgg")  # Use the TkAgg backend for embedding plots in Tkinter
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
 from . import utils_fft as utils
 
 
@@ -15,6 +18,17 @@ from . import utils_fft as utils
 # ----------------------------
 class FrequencyFilterApp:
     def __init__(self, root, image_path):
+        # -------------------------------
+        # 1) Increase default Tkinter font
+        # -------------------------------
+        default_font = tkFont.nametofont("TkDefaultFont")
+        default_font.configure(size=20)  # Set desired size (e.g., 12, 14, 16, etc.)
+
+        # -------------------------------
+        # 2) Increase default Matplotlib font
+        # -------------------------------
+        matplotlib.rcParams.update({"font.size": 20})  # Adjust global font size for plots
+
         self.root = root
         self.root.title("Interactive Frequency Filtering (3-Panel View)")
 
@@ -39,6 +53,9 @@ class FrequencyFilterApp:
         self.filter_label = ttk.Label(self.control_frame, text="Filter Type:")
         self.filter_label.pack(pady=2)
 
+        # optionMenuStyle = ttk.Style()
+        # optionMenuStyle.configure("my.TMenubutton", font=("Arial", 30, "bold"))
+
         self.filter_type = tk.StringVar(value="Low-pass")
         self.filter_combo = ttk.OptionMenu(
             self.control_frame,
@@ -48,6 +65,7 @@ class FrequencyFilterApp:
             "High-pass",
             "Single-freq",
             command=lambda _: self.update_plot(),
+            # style="my.TMenubutton",
         )
         self.filter_combo.pack(pady=2)
 

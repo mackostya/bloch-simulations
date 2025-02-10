@@ -52,7 +52,7 @@ def main():
     #    Example: pick some small offset from center in x & y
     # ------------------------------------
     freq_x, freq_y = 10, 10  # Adjust as needed
-    F_single_freq = utils.select_single_frequency(F_shifted, freq_x, freq_y, band_radius=0)
+    F_single_freq = utils.select_single_frequency(F_shifted, freq_x, freq_y, band_radius=1)
     img_single_freq = utils.ifft_image(F_single_freq)
     img_single_freq = np.real(img_single_freq)
 

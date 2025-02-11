@@ -32,11 +32,11 @@ class KSpaceWidget(QWidget):
         painter.setPen(pen)
         painter.drawRect(self.rect())
 
-        # Map kx, ky (which might be from e.g. -10..10) into widget coords
+        # Map kx, ky (which might be from e.g. -20..20) into widget coords
         w = self.width()
         h = self.height()
 
-        # Suppose we want k-space from -10..10 in both directions
+        # Suppose we want k-space from -20..20 in both directions
         k_min, k_max = -20, 20
         # Convert (kx, ky) -> pixel coords
         # x goes from left->right, y from top->bottom
@@ -91,7 +91,7 @@ class SpinWidget(QWidget):
         painter.drawRect(self.rect())
 
         # Draw spins
-        # We'll map real-space positions in [-5..5] x [-5..5]
+        # We'll map real-space positions in [-10..10] x [-10..10]
         # to widget coordinates:
         w = self.width()
         h = self.height()
@@ -102,7 +102,7 @@ class SpinWidget(QWidget):
             phase = (self.Gx * x + self.Gy * y) * 0.2  # scale factor?
 
             # Convert (x,y) to pixel coords
-            # assume -5..5 => margin..(w - margin)
+            # assume -10..10 => margin..(w - margin)
             px = margin + (x + 10) / 20.0 * (w - 2 * margin)
             py = (h - margin) - (y + 10) / 20.0 * (h - 2 * margin)
 
